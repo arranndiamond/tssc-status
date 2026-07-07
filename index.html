@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>The Skin Studio Chelsfield — Your Action List</title>
+<style>
+  :root {
+    --cream: #FAF6F1;
+    --warm-white: #FFFDF9;
+    --gold: #C9A96E;
+    --gold-light: #D4BC8B;
+    --gold-soft: rgba(201, 169, 110, 0.10);
+    --charcoal: #2C2C2C;
+    --text: #3D3530;
+    --text-light: #7A6E64;
+    --taupe-dark: #8C7B6B;
+    --border: #E8DFD5;
+    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(1200px 600px at 100% -10%, var(--gold-soft), transparent 60%),
+      var(--cream);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: clamp(2rem, 5vw, 4.5rem) clamp(1.1rem, 4vw, 2rem) 5rem; }
+
+  /* ---- Masthead ---- */
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .masthead { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 2.5rem; }
+  .masthead .eyebrow { margin-bottom: 0.9rem; }
+  .masthead h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.3rem, 6vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--charcoal);
+    text-wrap: balance;
+    margin-bottom: 1rem;
+  }
+  .masthead h1 em { font-style: italic; color: var(--gold); }
+  .intro { font-size: 1.05rem; color: var(--text-light); max-width: 60ch; }
+  .intro strong { color: var(--text); font-weight: 500; }
+
+  /* ---- Progress meter ---- */
+  .meter {
+    margin-top: 2rem;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .meter-count {
+    font-family: var(--serif);
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--charcoal);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .meter-count span { color: var(--taupe-dark); font-size: 1.2rem; }
+  .meter-body { flex: 1; min-width: 200px; }
+  .meter-label { font-size: 0.78rem; letter-spacing: 0.04em; color: var(--text-light); margin-bottom: 0.5rem; }
+  .track { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 99px; transition: width 0.5s cubic-bezier(.2,.7,.2,1); }
+  .meter-reset {
+    font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--taupe-dark); background: none; border: none; cursor: pointer; padding: 0.3rem 0; text-decoration: underline; text-underline-offset: 3px;
+  }
+  .meter-reset:hover { color: var(--charcoal); }
+
+  /* ---- Sections ---- */
+  section { margin-top: 3rem; }
+  .sec-head { margin-bottom: 1.25rem; }
+  .sec-head .eyebrow { display: block; margin-bottom: 0.5rem; }
+  .sec-head h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.6rem, 3.4vw, 2rem);
+    color: var(--charcoal);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .sec-head p { color: var(--text-light); font-size: 0.95rem; margin-top: 0.4rem; max-width: 62ch; }
+
+  /* ---- Card holding a list of tasks ---- */
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card.priority { border-color: var(--gold); box-shadow: 0 1px 0 var(--gold) inset, -3px 0 0 var(--gold); }
+
+  /* ---- Task row ---- */
+  .task { display: flex; gap: 0.95rem; padding: 1.05rem 1.35rem; border-top: 1px solid var(--border); align-items: flex-start; }
+  .task:first-child { border-top: none; }
+
+  .task input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+  .box {
+    flex-shrink: 0; margin-top: 0.15rem;
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 1.5px solid var(--taupe-dark);
+    background: var(--cream);
+    display: grid; place-items: center;
+    cursor: pointer; transition: background 0.18s, border-color 0.18s;
+  }
+  .box svg { width: 13px; height: 13px; stroke: var(--warm-white); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(0.6); transition: opacity 0.18s, transform 0.18s; }
+  .task input:checked + .box { background: var(--gold); border-color: var(--gold); }
+  .task input:checked + .box svg { opacity: 1; transform: scale(1); }
+  .task input:focus-visible + .box { outline: 2px solid var(--charcoal); outline-offset: 3px; }
+
+  .task-body { flex: 1; }
+  .task-title { font-size: 0.98rem; font-weight: 500; color: var(--charcoal); line-height: 1.5; cursor: pointer; }
+  .task-num { color: var(--gold); font-weight: 600; font-variant-numeric: tabular-nums; margin-right: 0.15rem; }
+  .task-detail { font-size: 0.88rem; color: var(--text-light); margin-top: 0.3rem; line-height: 1.65; }
+  .task-detail a { color: var(--taupe-dark); }
+  .task input:checked ~ .task-body .task-title { color: var(--taupe-dark); text-decoration: line-through; text-decoration-color: var(--border); }
+  .task input:checked ~ .task-body .task-detail { opacity: 0.6; }
+
+  /* inline flags */
+  .flag { display: inline-block; font-family: var(--sans); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18em 0.6em; border-radius: 99px; vertical-align: middle; margin-left: 0.4rem; }
+  .flag-safety { background: var(--gold-soft); color: var(--taupe-dark); border: 1px solid var(--border); }
+  .flag-decide { background: #F4EEE4; color: var(--taupe-dark); border: 1px solid var(--border); }
+
+  .subhead { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--taupe-dark); font-weight: 600; padding: 0.9rem 1.35rem 0.2rem; }
+
+  .named-list { list-style: none; margin: 0.55rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; }
+  .named-list li { font-size: 0.8rem; color: var(--text-light); background: var(--cream); border: 1px solid var(--border); border-radius: 99px; padding: 0.2rem 0.7rem; }
+
+  footer { margin-top: 3.5rem; padding-top: 1.6rem; border-top: 1px solid var(--border); color: var(--taupe-dark); font-size: 0.82rem; line-height: 1.7; }
+  footer .logo { font-family: var(--serif); font-size: 1.15rem; color: var(--charcoal); letter-spacing: 0.02em; }
+  footer .logo span { color: var(--gold); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* ---- Print / Save-as-PDF ---- */
+  @media print {
+    body { background: #fff; }
+    .meter-reset { display: none; }
+    .card, .meter { box-shadow: none; break-inside: avoid; }
+    .task { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">The Skin Studio Chelsfield</span>
+    <h1>Where things stand &mdash; <em>your to-do list</em></h1>
+    <p class="intro">The website, booking links and behind-the-scenes tech are all handled. These are the bits that only you can do to get everything switched on and bringing clients in. <strong>They're ordered by what moves the needle most</strong> &mdash; the top handful matter far more than the long tail, so start there and work down when you have a spare half hour.</p>
+
+    <div class="meter" role="status" aria-live="polite">
+      <div class="meter-count"><span id="done">0</span>&thinsp;<span>/</span>&thinsp;<span id="total">0</span></div>
+      <div class="meter-body">
+        <div class="meter-label" id="meter-label">Tick things off as you go &mdash; it saves on this device</div>
+        <div class="track"><div class="fill" id="fill"></div></div>
+      </div>
+      <button class="meter-reset" id="reset" type="button">Reset</button>
+    </div>
+  </header>
+
+  <!-- ===================== START HERE ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Start here</span>
+      <h2>The five that matter most this week</h2>
+      <p>If you only touch a handful of things, make it these. Each one either protects a client or turns existing goodwill into bookings.</p>
+    </div>
+    <div class="card priority">
+
+      <label class="task">
+        <input type="checkbox" data-id="s1">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title"><span class="task-num">1.</span>Move your five clients' consultation notes into Fresha <span class="flag flag-safety">Safety</span></span>
+          <span class="task-detail">Each client's notes are already written up and ready to paste, one block each (the named list is in your notes file). Open the client in Fresha &rarr; Notes &rarr; paste. A couple have important flags to carry over, so worth doing carefully:</span>
+          <ul class="named-list">
+            <li>CB &mdash; allergies + reaction history</li>
+            <li>LF &mdash; confirm photo consent</li>
+            <li>NLD &mdash; re-take all consents</li>
+            <li>KR &mdash; fix emergency contact</li>
+            <li>CW</li>
+          </ul>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="s2">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title"><span class="task-num">2.</span>Create the £20 new-client code in Fresha</span>
+          <span class="task-detail">Fresha &rarr; Marketing &rarr; Promotions &rarr; new code named exactly <strong>TSSC20</strong>: £20 off, new clients only, one use per client, expires 31 July 2026, facials only (exclude course packages). The website quiz hands this code out, so it needs to exist for checkout to accept it. Tell Arrann once it's live and he'll switch the quiz offer on.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="s3">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title"><span class="task-num">3.</span>Point your Instagram bio link at the new hub page</span>
+          <span class="task-detail">Set the link in your Instagram bio to <strong>theskinstudiochelsfield.co.uk/links.html</strong> &mdash; one tidy page with Book, the skin quiz, treatments &amp; prices, about you, and call/text, all in your branding.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="s4">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title"><span class="task-num">4.</span>Reply to your two new Google reviews &amp; add a few fresh photos</span>
+          <span class="task-detail">Replying is a genuine ranking signal and looks lovely to anyone weighing you up. Ready-made warm replies are saved if you'd like them. While you're in there, add a couple of real photos (see the Google section below).</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="s5">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title"><span class="task-num">5.</span>Build the consultation &amp; photo-consent forms in Fresha</span>
+          <span class="task-detail">Create both from the spec Arrann's written up, and attach them to every first-visit and facial service so they send automatically when someone books. This is what keeps you covered on every new client.</span>
+        </span>
+      </label>
+
+    </div>
+  </section>
+
+  <!-- ===================== FRESHA ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Your booking system</span>
+      <h2>Finish setting up Fresha</h2>
+      <p>The engine room. Most of this is one-off setup that then runs itself.</p>
+    </div>
+    <div class="card">
+
+      <label class="task">
+        <input type="checkbox" data-id="f1">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Turn on the Instagram &amp; Facebook "Book" button</span>
+          <span class="task-detail">Make sure Instagram is a Business/Professional account, then in Fresha: Marketing &rarr; Online booking &rarr; Facebook &amp; Instagram &rarr; Enable, and connect the accounts. You get a Book button right on your profile.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="f2">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Switch on automatic review requests + Google Rating Boost</span>
+          <span class="task-detail">Every appointment you check out then asks the client for a review automatically &mdash; so your existing happy clients quietly build both your Fresha and Google ratings. Just remember to check out each appointment in the calendar.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="f3">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Turn on the client automations (email only)</span>
+          <span class="task-detail">Enable the <em>Email</em> channel only (it's free; leave SMS/WhatsApp off). Switch on: rebook reminder, win-back lapsed clients, birthday, and reward-loyal-clients. Leave "Welcome new clients" <em>off</em> &mdash; it clashes with your own personal follow-up email.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="f4">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Complete your Fresha profile &amp; apply for "Verified"</span>
+          <span class="task-detail">Photos, full service menu, your bio. A complete, verified profile ranks higher if you ever want the Fresha marketplace as an extra discovery channel.</span>
+        </span>
+      </label>
+
+      <div class="subhead">A little client housekeeping</div>
+      <label class="task">
+        <input type="checkbox" data-id="f5">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Tidy three client records</span>
+          <span class="task-detail">Re-take NLD's consent (her form had everything as "No"), fix KR's emergency contact (she put her own name), and delete the "Arrann" test client.</span>
+        </span>
+      </label>
+
+    </div>
+  </section>
+
+  <!-- ===================== GOOGLE ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Free local visibility</span>
+      <h2>Your Google Business Profile</h2>
+      <p>The single biggest free lever for being found locally. You're already at 5.0&#9733; &mdash; this is about completeness and keeping it fresh.</p>
+    </div>
+    <div class="card">
+
+      <label class="task">
+        <input type="checkbox" data-id="g1">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Set your opening hours to match the website</span>
+          <span class="task-detail">Arrann's just set your public hours on the site to <strong>Mon&ndash;Fri 9:30am&ndash;6:30pm, Sat 9:30am&ndash;2pm, Sun closed</strong>. Update Google to exactly the same so the two never disagree. (Your real bookable slots still come from Fresha &mdash; these are just the "when we're open" signal.)</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="g2">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Add real photos &mdash; and consider removing the house-exterior one</span>
+          <span class="task-detail">The treatment room, your Circadia/Dermalux products, a lifestyle shot or two, you at work. The current street-view of the house doesn't sell the experience (and there's a privacy angle to it).</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="g3">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Work through Google's "Complete your profile" prompts</span>
+          <span class="task-detail">Keep going until the profile-strength ring is full. Also fill the "More" attributes &mdash; payment types you accept, service options.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="g4">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Tidy the services list</span>
+          <span class="task-detail">Remove the duplicate generic "Facial" (your Signature Facial covers it), check whether "Hydrating Facial" is actually a real bookable treatment (remove if not), and confirm "New Client Consultation + Signature Facial (£137)" is listed.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="g5">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Confirm the "Book online" button goes to your Fresha link</span>
+          <span class="task-detail">Make sure it points to your direct booking link (not the Fresha marketplace, which can charge a new-client fee).</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="g6">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Post to Google roughly weekly</span>
+          <span class="task-detail">An offer, a new treatment, a quick tip. It keeps the profile active, which Google rewards. There's a set of ready-to-post drafts if that helps.</span>
+        </span>
+      </label>
+
+      <div class="subhead">Two small decisions for you &amp; Arrann</div>
+      <label class="task">
+        <input type="checkbox" data-id="g7">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Home address: show it or not? <span class="flag flag-decide">Decide</span></span>
+          <span class="task-detail">The full address is public right now. Showing it helps local ranking and lets clients find you; hiding it protects privacy for a home studio. Entirely your call &mdash; just flagging it.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="g8">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Pick one wording for your address everywhere <span class="flag flag-decide">Decide</span></span>
+          <span class="task-detail">The website says "Chelsfield, Kent" and Google/Fresha say "Orpington" &mdash; both correct for BR6, but Google likes it identical everywhere. Decide the wording and Arrann will line up the website to match.</span>
+        </span>
+      </label>
+
+    </div>
+  </section>
+
+  <!-- ===================== SIGN-OFFS ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Waiting on you</span>
+      <h2>Pages ready for your sign-off</h2>
+      <p>These are built and waiting. They stay hidden until you're happy &mdash; nothing goes public without your yes. The clinical detail on the two new treatments is entirely your expertise to set.</p>
+    </div>
+    <div class="card">
+
+      <label class="task">
+        <input type="checkbox" data-id="p1">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Read &amp; approve the five "skin concern" pages + the gift-voucher page</span>
+          <span class="task-detail">Redness, breakouts, dry skin, sensitive skin and dullness/glow &mdash; written to bring in local searches. Have a read, tweak anything that doesn't sound like you, and once you approve they get linked into the site.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="p2">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Microneedling page &mdash; confirm the details <span class="flag flag-safety">Your call</span></span>
+          <span class="task-detail">Approve the wording, and give the device, pricing, session guidance and who it's not suitable for, so it's accurate before it can be booked.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="p3">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Chemical Peels page &mdash; the new one <span class="flag flag-safety">Your call</span></span>
+          <span class="task-detail">Live to preview at <strong>theskinstudiochelsfield.co.uk/chemical-peeling</strong> (only reachable with the link). Needed from you: happy with the wording? which peel(s) &amp; strengths, who it's not for, the price, how long a session takes, and a photo. Then say when you'd like it bookable.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="p4">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Sign off the small print on the £20 offer &amp; the skin quiz</span>
+          <span class="task-detail">A quick read of the offer terms and the quiz questions/consent wording, so everything's above board (UK advertising rules) before it's promoted.</span>
+        </span>
+      </label>
+
+    </div>
+  </section>
+
+  <!-- ===================== OTHER ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">When you get to them</span>
+      <h2>The rest</h2>
+      <p>Lower urgency, but each one helps &mdash; especially the photography, which feeds the website, Google and Fresha all at once.</p>
+    </div>
+    <div class="card">
+
+      <label class="task">
+        <input type="checkbox" data-id="o1">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Finish the Apple Business Connect verification</span>
+          <span class="task-detail">Puts you on Apple Maps &amp; Siri (free, and lots of people search on iPhones). It stalled at document-upload when the link expired. Sign in at businessconnect.apple.com as ellen.diamond@gmail.com, re-issue the upload link, and upload a proof-of-business doc (bank statement, HMRC letter, or insurance certificate). Have two or three ready in case a link times out again.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="o2">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Real studio &amp; treatment photography</span>
+          <span class="task-detail">The biggest single upgrade left. A proper set of photos &mdash; the room, treatments in progress, product flatlays, you at work &mdash; replaces placeholders on the website and fills out Google and Fresha in one go.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="o3">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Keep your availability up to date in Fresha</span>
+          <span class="task-detail">The website's Book buttons all lead into Fresha, so as long as your shifts and available slots are current there, everything downstream stays right.</span>
+        </span>
+      </label>
+
+      <label class="task">
+        <input type="checkbox" data-id="o4">
+        <span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span class="task-body">
+          <span class="task-title">Add your booking email to your contacts</span>
+          <span class="task-detail">The first email from bookings@theskinstudiochelsfield.co.uk can land in Junk (especially for iCloud users). Add it to your contacts and mark "Not Junk" so confirmations always arrive.</span>
+        </span>
+      </label>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">The Skin <span>Studio</span></div>
+    <p style="margin-top:0.5rem;">Compiled from the working action notes. Ticks are saved on this device only &mdash; nothing is shared. Anything already done, or that you'd like reworded, just say and it'll be updated.</p>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var KEY = 'tss_ellen_checklist_v1';
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('input[type=checkbox][data-id]'));
+    var doneEl = document.getElementById('done');
+    var totalEl = document.getElementById('total');
+    var fill = document.getElementById('fill');
+    var labelEl = document.getElementById('meter-label');
+
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+
+    function persist() {
+      var state = {};
+      boxes.forEach(function (b) { state[b.dataset.id] = b.checked; });
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function render() {
+      var done = boxes.filter(function (b) { return b.checked; }).length;
+      var total = boxes.length;
+      doneEl.textContent = done;
+      totalEl.textContent = total;
+      fill.style.width = (total ? (done / total * 100) : 0) + '%';
+      if (done === 0) { labelEl.textContent = 'Tick things off as you go — it saves on this device'; }
+      else if (done === total) { labelEl.textContent = 'That’s the lot — wonderful work.'; }
+      else { labelEl.textContent = (total - done) + ' still to go — no rush, whenever suits'; }
+    }
+
+    boxes.forEach(function (b) {
+      if (saved[b.dataset.id]) b.checked = true;
+      b.addEventListener('change', function () { persist(); render(); });
+    });
+    render();
+
+    document.getElementById('reset').addEventListener('click', function () {
+      boxes.forEach(function (b) { b.checked = false; });
+      persist(); render();
+    });
+  })();
+</script>
+</body>
+</html>
